@@ -30,3 +30,8 @@ docker network ls
 docker network rm $(docker network ls -q)
 docker network ls
 ```
+
+
+
+docker stop $(docker ps -a -q)
+docker image rm -f $(docker image ls -q)
