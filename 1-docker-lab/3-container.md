@@ -104,9 +104,15 @@ docker run -d -p 8080:8080 --name java-web-service --memory 512m --memory-swap 5
 docker run -d -p 8080:8080 --name java-web-service --memory 512m --kernel-memory 256m java-web-service:v1
 
 ```
-
 ### start a container with a 2 cpu cores and 512m memory
 ```bash
 docker run -d -p 8080:8080 --name java-web-service --cpus 2 --memory 512m java-web-service:v1
 docker ps
+```
+
+
+### monitoring a container
+```bash
+docker run -d -p 8080:8080 --name java-web-service --cpus 2 --memory 512m java-web-service:v1
+docker stats <container-id>
 ```

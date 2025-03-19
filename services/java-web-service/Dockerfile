@@ -10,7 +10,7 @@ RUN mvn package -DskipTests
 FROM amazoncorretto:17-alpine-jdk as stage2
 WORKDIR /app
 COPY --from=stage1 /app/target/java-web-service-0.0.1-SNAPSHOT.jar /app
-USER nobody
+USER root
 ENV SPRING_PROFILES_ACTIVE=prod
 STOPSIGNAL SIGINT
 EXPOSE 8080
