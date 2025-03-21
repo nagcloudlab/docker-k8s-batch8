@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-deploy
+  labels:
+    app: nginx
+    type: front-end
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+        type: front-end
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-container

@@ -1,0 +1,14 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: multi-run-job
+spec:
+  completions: 3  # Runs 3 separate instances before completion
+  template:
+    spec:
+      containers:
+      - name: multi-run-container
+        image: busybox
+        command: ["sh", "-c", "echo 'Processing Task...' && sleep 5"]
+      restartPolicy: Never

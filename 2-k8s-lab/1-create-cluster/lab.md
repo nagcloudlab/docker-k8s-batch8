@@ -26,11 +26,19 @@ kind version
 ### create k8s cluster
 
 ```bash
-kind delete cluster --name my-cluster
 kind create cluster --image kindest/node:v1.30.0 --config kind-cluster.yaml --name kind-cluster
 kind get clusters
 kubectl get nodes
 ```
+
+
+### get k8s resources
+
+```bash
+kubectl api-versions
+kubectl api-resources
+```
+
 
 
 ### delete k8s cluster

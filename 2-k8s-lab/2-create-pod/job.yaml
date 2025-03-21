@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: hello-container
+        image: busybox
+        command: ["sh", "-c", "echo 'Hello from Kubernetes Job' && sleep 10"]
+      restartPolicy: Never  # Ensures it doesn't restart

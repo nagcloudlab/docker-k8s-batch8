@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: parallel-job
+spec:
+  completions: 5  # Total instances to run
+  parallelism: 2  # Two pods will run at the same time
+  template:
+    spec:
+      containers:
+      - name: parallel-container
+        image: busybox
+        command: ["sh", "-c", "echo 'Processing in Parallel' && sleep 10"]
+      restartPolicy: Never
