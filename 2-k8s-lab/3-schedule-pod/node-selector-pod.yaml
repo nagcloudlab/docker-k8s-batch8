@@ -4,7 +4,7 @@ metadata:
   name: node-selector-pod
 spec:
   nodeSelector:
-    size: medium  # Pod will only run on nodes labeled with "size=large"
+    city: mumbai 
   containers:
   - name: nginx
     image: nginx

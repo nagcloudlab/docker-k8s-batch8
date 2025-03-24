@@ -8,9 +8,9 @@ spec:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
-          - key: disktype
+          - key: city
             operator: In
-            values: ["ssd"]
+            values: ["mumbai","chennai"]
   containers:
   - name: nginx
     image: nginx

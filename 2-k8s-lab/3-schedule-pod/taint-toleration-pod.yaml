@@ -4,7 +4,7 @@ metadata:
   name: taint-toleration-pod
 spec:
   tolerations:
-  - key: "trainee"
+  - key: "npci"
     operator: "Equal"
     value: "true"
     effect: "NoSchedule"

@@ -5,6 +5,5 @@ metadata:
 spec:
   nodeName: kind-cluster-worker
   containers:
-  - name: busybox
-    image: busybox
-    command: ["sh", "-c", "echo 'Manually scheduled' && sleep 3600"]
+  - name: nginx-container
+    image: nginx
