@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: manual-scheduled-pod
+spec:
+  nodeName: kind-cluster-worker
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["sh", "-c", "echo 'Manually scheduled' && sleep 3600"]

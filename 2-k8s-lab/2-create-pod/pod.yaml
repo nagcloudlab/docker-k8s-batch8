@@ -4,13 +4,9 @@ metadata:
   name: nginx-pod
   labels:
     app: nginx
-    region: chennai
-    env: prod
+    dc: hyderabad
 spec:
   containers:
-  - image: nginx:1.11.7
-    name: nginx-container
-  - image: alpine
-    name: alpine-container 
-    command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
-
+  - name: nginx-container 
+    image: nginx:1.11.7
+    

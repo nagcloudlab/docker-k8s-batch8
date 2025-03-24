@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: hello-cronjob
 spec:
-  schedule: "*/1 * * * *"  # Runs every 2 minutes
+  schedule: "*/1 * * * *"  # Run every minute
   jobTemplate:
     spec:
       template:

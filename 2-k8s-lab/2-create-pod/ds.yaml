@@ -1,21 +1,32 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: nginx-deploy
-  labels:
-    app: nginx
-    type: front-end
+  name: prometheus
 spec:
   selector:
     matchLabels:
-      app: nginx
+      app: prometheus
   template:
     metadata:
-      name: nginx-pod
       labels:
-        app: nginx
-        type: front-end
+        app: prometheus
     spec:
       containers:
-      - image: nginx
-        name: nginx-container
+      - name: prometheus
+        image: prom/prometheus
+        ports:
+        - containerPort: 9090
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+  - port: 80
+    targetPort: 9090
+  type: NodePort

@@ -3,10 +3,9 @@ kind: Deployment
 metadata:
   name: nginx-deploy
   labels:
-    app: nginx
-    type: front-end
+    app: nginx-deploy
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: nginx
@@ -15,8 +14,7 @@ spec:
       name: nginx-pod
       labels:
         app: nginx
-        type: front-end
     spec:
       containers:
-      - image: nginx:latest
+      - image: nginx:1.11.7
         name: nginx-container

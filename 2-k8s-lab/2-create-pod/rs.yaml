@@ -11,18 +11,18 @@ spec:
     matchLabels:
       app: nginx
     matchExpressions:
-      - key: type
+      - key: dc
         operator: In
         values:
-          - front-end
-          - ui  
+          - chennai
+          - hyderabad  
   template:
     metadata:
       name: nginx-pod
       labels:
         app: nginx
-        type: front-end
+        dc: chennai
     spec:
       containers:
-      - image: nginx:1.11.7
+      - image: nginx:latest
         name: nginx-container

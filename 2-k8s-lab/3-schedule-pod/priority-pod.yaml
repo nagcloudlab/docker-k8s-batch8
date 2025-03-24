@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: priority-pod
+spec:
+  priorityClassName: high-priority
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["sh", "-c", "echo 'Running with High Priority' && sleep 3600"]

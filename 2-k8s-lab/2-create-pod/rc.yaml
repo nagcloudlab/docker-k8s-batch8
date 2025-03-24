@@ -5,22 +5,16 @@ metadata:
   labels:
     app: nginx-rc
 spec:
-  replicas: 5
+  replicas: 3
   selector:
-    app: nginx  
+    app: nginx
   template:
     metadata:
       name: nginx-pod
       labels:
         app: nginx
-        region: chennai
-        env: prod
     spec:
       containers:
       - image: nginx:1.11.7
         name: nginx-container
-      - image: alpine
-        name: alpine-container 
-        command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
-
-   
+  
