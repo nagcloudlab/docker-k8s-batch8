@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongodb-sts
+  name: nginx-sts
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      app: mongodb
+      app: nginx
   template:
     metadata:
       labels:
-        app: mongodb
+        app: nginx
     spec:
       containers:
-        - name: mongodb-container
-          image: mongo
+        - name: nginx-container
+          image: nginx
 

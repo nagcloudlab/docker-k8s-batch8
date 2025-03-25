@@ -1,0 +1,203 @@
+# Complete Istio YAML File for Exposing `vote` Service Externally and Managing Traffic
+
+---
+# 🔹 Vote App v1 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-v1
+  labels:
+    app: vote
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vote
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: vote
+        version: v1
+    spec:
+      containers:
+        - name: vote
+          image: docker/example-voting-app-vote
+          ports:
+            - containerPort: 80
+
+---
+# 🔹 Vote App v2 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-v2
+  labels:
+    app: vote
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vote
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: vote
+        version: v2
+    spec:
+      containers:
+        - name: vote
+          image: docker/example-voting-app-vote
+          ports:
+            - containerPort: 80
+
+---
+# 🔹 Single Service for Vote App (Handles v1 & v2)
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: vote  # Matches both v1 and v2
+
+---
+# 🔹 Istio DestinationRule (Define Traffic Subsets)
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: vote
+spec:
+  host: vote
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+    - name: v2
+      labels:
+        version: v2
+
+---
+# 🔹 Istio VirtualService (Traffic Splitting & External Access)
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vote
+spec:
+  hosts:
+    - "vote.local"
+  gateways:
+    - voting-gateway
+  http:
+    - route:
+        - destination:
+            host: vote
+            subset: v1
+          weight: 0
+        - destination:
+            host: vote
+            subset: v2
+          weight: 100
+
+---
+# 🔹 Istio Gateway (Expose `vote` Service Externally)
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: voting-gateway
+spec:
+  selector:
+    istio: ingressgateway  # Ensures traffic flows through Istio
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "vote.local"
+
+---
+# 🔹 Redis Deployment with Probes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 3
+            periodSeconds: 3
+
+---
+# 🔹 Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+    - name: redis
+      port: 6379
+  selector:
+    app: redis
+
+---
+# 🔹 Istio VirtualService for Redis (TCP Monitoring)
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: redis
+spec:
+  hosts:
+    - redis
+  tcp:
+    - match:
+        - port: 6379
+      route:
+        - destination:
+            host: redis
+            port:
+              number: 6379
+
+---
+# 🔹 Istio DestinationRule for Redis
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: redis
+spec:
+  host: redis
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100

@@ -6,22 +6,22 @@ metadata:
     app: nginx
     type: front-end
 spec:
-  replicas: 3
+  replicas: 
   selector:
     matchLabels:
       app: nginx
     matchExpressions:
-      - key: dc
+      - key: type
         operator: In
         values:
-          - chennai
-          - hyderabad  
+          - front-end
+          - ui  
   template:
     metadata:
       name: nginx-pod
       labels:
         app: nginx
-        dc: chennai
+        type: front-end
     spec:
       containers:
       - image: nginx:latest

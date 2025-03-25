@@ -13,6 +13,7 @@ spec:
       name: nginx-pod
       labels:
         app: nginx
+        type: front-end
     spec:
       containers:
       - image: nginx:1.11.7

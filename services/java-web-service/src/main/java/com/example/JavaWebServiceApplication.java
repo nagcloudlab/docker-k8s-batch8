@@ -37,7 +37,7 @@ public class JavaWebServiceApplication {
 	public String hello() {
 		// Log request to file
 		try {
-			fileWriter.write("Request received at " + new Date() + "\n");
+			fileWriter.write("Request received at " + new Date() + "\n"); 
 			fileWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

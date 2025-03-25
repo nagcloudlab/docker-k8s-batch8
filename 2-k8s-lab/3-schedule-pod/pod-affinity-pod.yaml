@@ -1,0 +1,39 @@
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine
+  labels:
+    app: alpine
+spec:
+  containers:
+  - name: alpine
+    image: alpine
+    command: ["sleep", "3600"]
+
+---
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - alpine
+        topologyKey: "kubernetes.io/hostname"
+  containers:
+  - name: redis
+    image: redis
+
+

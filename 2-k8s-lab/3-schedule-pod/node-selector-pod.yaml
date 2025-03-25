@@ -4,7 +4,7 @@ metadata:
   name: node-selector-pod
 spec:
   nodeSelector:
-    city: mumbai 
+    city: mumbai
   containers:
   - name: nginx
     image: nginx

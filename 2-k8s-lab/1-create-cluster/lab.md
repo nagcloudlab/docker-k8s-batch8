@@ -24,6 +24,7 @@ kind version
 
 ### create k8s cluster
 ```bash
+kind delete cluster --name my-cluster
 kind create cluster --image kindest/node:v1.30.0 --config kind-cluster.yaml --name kind-cluster
 kind get clusters
 kubectl get nodes
@@ -31,6 +32,7 @@ kubectl get nodes
 
 
 ### delete k8s cluster
+
 ```bash
 kind delete cluster --name my-k8s-cluster
 ```
@@ -55,7 +57,11 @@ kubectl port-forward --address 0.0.0.0 -n cattle-system svc/rancher 8443:443
 
 
 
+
+
+
 ### get all k8s resources
+
 ```bash
 kubectl api-versions
 kubectl api-resources
@@ -71,6 +77,6 @@ kubectl get namespaces
 ### switch to a namespace
 
 ```bash
-kubectl config set-context --current --namespace=batch8-namespace
+kubectl config set-context --current --namespace=my-namespace
 ```
 

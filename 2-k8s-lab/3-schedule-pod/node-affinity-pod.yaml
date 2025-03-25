@@ -10,7 +10,7 @@ spec:
         - matchExpressions:
           - key: city
             operator: In
-            values: ["mumbai","chennai"]
+            values: ["mumbai","hyderabad"]
   containers:
   - name: nginx
     image: nginx

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-1
+  labels:
+    app: nginx
+spec:
+  nodeName: my-k8s-cluster-worker
+  containers:
+    - name: nginx
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-2
+  labels:
+    app: nginx
+spec:
+  nodeName: my-k8s-cluster-worker2
+  containers:
+    - name: nginx
+      image: nginx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-clusterip-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nodeport-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      targetPort: 80
+      port: 80
+      nodePort: 30080
+  type: NodePort
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: nginx-lb-service
+# spec:
+#   selector:
+#     app: nginx
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 80
+#   type: LoadBalancer
+
+# ---
+

@@ -4,9 +4,14 @@ metadata:
   name: nginx-pod
   labels:
     app: nginx
-    dc: hyderabad
+    type: proxy
 spec:
   containers:
   - name: nginx-container 
     image: nginx:1.11.7
+  # - name: alpine-container
+  #   image: alpine:3.5
+  #   command: ["/bin/sh"]
+  #   args: ["-c", "while true; do echo hello; sleep 10;done"]  
     
+
