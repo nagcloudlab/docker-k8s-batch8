@@ -11,3 +11,11 @@ cat /app/log/java-web-service.log
 kubectl exec -it java-web-service-pod -c log-reader-container  -- /bin/sh
 cat /var/log/java-web-service.log
 ```
+
+
+### persistent volumes
+
+```bash
+kubectl apply -f pv.yaml
+kubectl get pv
+```

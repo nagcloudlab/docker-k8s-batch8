@@ -1,24 +1,85 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: java-web-service-pod
+  name: java-web-service-pod-1
 spec:
+  nodeName: kind-cluster-worker
   containers:
   - name: java-web-service-container
     image: docker.io/nagabhushanamn/java-web-service:batch8
     volumeMounts:
     - name: log-data
       mountPath: /app/log
-  - name: log-reader-container
-    image: busybox
-    command: ['sleep', '3600']
-    volumeMounts:
-    - name: log-data
-      mountPath: /var/log
+  # - name: log-reader-container
+  #   image: busybox
+  #   command: ['sleep', '3600']
+  #   volumeMounts:
+  #   - name: log-data
+  #     mountPath: /var/log
   volumes:
   - name: log-data
     # emptyDir: {}  
-    hostPath:
-      path: /var/log
-      type: DirectoryOrCreate
+    # hostPath:
+    #   path: /var/log
+    #   type: DirectoryOrCreate
+    persistentVolumeClaim:
+      claimName: nfs-pvc-1
+  
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: java-web-service-pod-2
+spec:
+  nodeName: kind-cluster-worker
+  containers:
+  - name: java-web-service-container
+    image: docker.io/nagabhushanamn/java-web-service:batch8
+    volumeMounts:
+    - name: log-data
+      mountPath: /app/log
+  # - name: log-reader-container
+  #   image: busybox
+  #   command: ['sleep', '3600']
+  #   volumeMounts:
+  #   - name: log-data
+  #     mountPath: /var/log
+  volumes:
+  - name: log-data
+    # emptyDir: {}  
+    # hostPath:
+    #   path: /var/log
+    #   type: DirectoryOrCreate
+    persistentVolumeClaim:
+      claimName: nfs-pvc-1
+  
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: java-web-service-pod-3
+spec:
+  nodeName: kind-cluster-worker2
+  containers:
+  - name: java-web-service-container
+    image: docker.io/nagabhushanamn/java-web-service:batch8
+    volumeMounts:
+    - name: log-data
+      mountPath: /app/log
+  # - name: log-reader-container
+  #   image: busybox
+  #   command: ['sleep', '3600']
+  #   volumeMounts:
+  #   - name: log-data
+  #     mountPath: /var/log
+  volumes:
+  - name: log-data
+    # emptyDir: {}  
+    # hostPath:
+    #   path: /var/log
+    #   type: DirectoryOrCreate
+    persistentVolumeClaim:
+      claimName: nfs-pvc-1
   
