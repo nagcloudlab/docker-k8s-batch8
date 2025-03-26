@@ -1,6 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: voting-app-config
+data:
+  POSTGRES_HOST: db
+  REDIS_HOST: redis
+
+--- 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: voting-app-secret
+type: Opaque
+data:
+  POSTGRES_PASSWORD: cG9zdGdyZXM=
+
+---
+
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOncePod
+  storageClassName: ""  
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 10.0.0.4
+    path: "/data/nfs/postgres"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+spec:
+  accessModes:
+    - ReadWriteOncePod
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ""
+
+---
+
 # PostgreSQL Database
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: db
   labels:
@@ -29,7 +80,10 @@ spec:
           image: postgres:15
           env:
             - name: POSTGRES_PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: voting-app-secret
+                  key: POSTGRES_PASSWORD
             - name: POSTGRES_HOST_AUTH_METHOD
               value: trust
           ports:
@@ -47,8 +101,7 @@ spec:
       volumes:
         - name: db-data
           persistentVolumeClaim:
-            claimName: postgres-pvc
-        
+            claimName: db-pvc
 
 ---
 apiVersion: v1
@@ -83,6 +136,15 @@ spec:
       labels:
         app: redis
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: role
+                    operator: NotIn
+                    values:
+                      - db
       containers:
         - name: redis
           image: redis:alpine
@@ -144,9 +206,15 @@ spec:
           image: docker/example-voting-app-worker
           env:
             - name: POSTGRES_HOST
-              value: db
+              valueFrom:
+                configMapKeyRef:
+                  name: voting-app-config
+                  key: POSTGRES_HOST
             - name: REDIS_HOST
-              value: redis
+              valueFrom:
+                configMapKeyRef:
+                  name: voting-app-config
+                  key: REDIS_HOST
           resources:
             requests:
               cpu: "150m"
@@ -236,16 +304,6 @@ spec:
       labels:
         app: result
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - vote
-              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: result
           image: docker/example-voting-app-result
@@ -253,7 +311,10 @@ spec:
             - containerPort: 80
           env:
             - name: POSTGRES_HOST
-              value: db
+              valueFrom:
+                configMapKeyRef:
+                  name: voting-app-config
+                  key: POSTGRES_HOST
           resources:
             requests:
               cpu: "100m"

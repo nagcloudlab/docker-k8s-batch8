@@ -15,38 +15,36 @@ spec:
         app: db
     spec:
       containers:
-      - name: db
-        image: postgres:15
-        env:
-        - name: POSTGRES_PASSWORD
-          value: postgres
-        - name: POSTGRES_HOST_AUTH_METHOD
-          value: trust
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - name: db-data
-          mountPath: /var/lib/postgresql/data
+        - name: db
+          image: postgres:15
+          env:
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: trust
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
       volumes:
-      - name: db-data
-        emptyDir: {}      
+        - name: db-data
+          emptyDir: {}
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: db
+  labels:
+    app: db
 spec:
+  ports:
+    - port: 5432
   selector:
     app: db
-  ports:
-  - port: 5432
-    targetPort: 5432
-  type: ClusterIP
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -64,27 +62,25 @@ spec:
         app: redis
     spec:
       containers:
-      - name: redis
-        image: redis:alpine
-        ports:
-        - containerPort: 6379
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: redis
+  labels:
+    app: redis
 spec:
+  ports:
+    - port: 6379
   selector:
     app: redis
-  ports:
-  - port: 6379
-    targetPort: 6379
-  type: ClusterIP
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -102,11 +98,15 @@ spec:
         app: worker
     spec:
       containers:
-      - name: worker
-        image: docker/example-voting-app-worker
+        - name: worker
+          image: docker/example-voting-app-worker
+          env:
+            - name: POSTGRES_HOST
+              value: db
+            - name: REDIS_HOST
+              value: redis
 
---- 
-
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -124,28 +124,32 @@ spec:
         app: vote
     spec:
       containers:
-      - name: vote
-        image: docker/example-voting-app-vote
-        ports:
-        - containerPort: 80
+        - name: vote
+          image: docker/example-voting-app-vote
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS_HOST
+              value: redis
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: vote
+  labels:
+    app: vote
 spec:
+  ports:
+    - protocol: TCP
+      targetPort: 80
+      port: 80
+      nodePort: 30002
   selector:
     app: vote
-  ports:
-  - port: 80
-    targetPort: 80
-    nodePort: 30001
   type: NodePort
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -163,24 +167,27 @@ spec:
         app: result
     spec:
       containers:
-      - name: result
-        image: docker/example-voting-app-result
-        ports:
-        - containerPort: 80
+        - name: result
+          image: docker/example-voting-app-result
+          ports:
+            - containerPort: 80
+          env:
+            - name: POSTGRES_HOST
+              value: db
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: result
+  labels:
+    app: result
 spec:
+  ports:
+    - protocol: TCP
+      targetPort: 80
+      port: 80
+      nodePort: 30004
   selector:
     app: result
-  ports:
-  - port: 80
-    targetPort: 80
-    nodePort: 30002
   type: NodePort
-
----
