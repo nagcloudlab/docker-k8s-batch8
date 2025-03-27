@@ -17,38 +17,6 @@ data:
 
 ---
 
-
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: nfs-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOncePod
-  storageClassName: ""  
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: 10.0.0.4
-    path: "/data/nfs/postgres"
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: db-pvc
-spec:
-  accessModes:
-    - ReadWriteOncePod
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: ""
-
----
-
 # PostgreSQL Database
 apiVersion: apps/v1
 kind: StatefulSet
@@ -100,8 +68,7 @@ spec:
               mountPath: /var/lib/postgresql/data
       volumes:
         - name: db-data
-          persistentVolumeClaim:
-            claimName: db-pvc
+          emptyDir: {}
 
 ---
 apiVersion: v1

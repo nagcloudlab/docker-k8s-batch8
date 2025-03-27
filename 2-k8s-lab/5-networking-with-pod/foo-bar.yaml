@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: foo
-        image: nagabhushanamn/foo-service:batch8
+        image: nagabhushanamn/foo-service:batch7
         ports:
         - containerPort: 8080
 
@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
       - name: bar
-        image: nagabhushanamn/bar-service:batch8
+        image: nagabhushanamn/bar-service:batch7
         ports:
         - containerPort: 8080
 
